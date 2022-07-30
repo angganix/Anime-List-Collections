@@ -19,12 +19,15 @@ const menuStyle = `
 `;
 
 const NavHeader = styled.header`
-    position: sticky;
+    position: static;
     top: 0;
     background-color: ${base.dark};
-    box-shadow: 0px 4px 8px #33333366;
-    padding: 0 1rem;
+    padding: 2rem 16rem 0.8rem;
     z-index: 1001;
+    @media (max-width: 576px) {
+        padding: 0 0.3rem;
+        position: sticky;
+    }
 `
 
 const SiteBrand = styled.a`
@@ -33,6 +36,7 @@ const SiteBrand = styled.a`
     display: block;
     padding: 0.8rem 0.4rem;
     font-size: 20px;
+    font-weight: bold;
 `
 
 const NavContainer = styled.nav`
@@ -75,7 +79,7 @@ const TopNav = () => {
                     ))}
                 </MenuWrapper>
                 <ToggleMenu>
-                    <HiOutlineMenuAlt3 size={18} />
+                    <HiOutlineMenuAlt3 size={18} style={{ marginBottom: -1.5 }} />
                 </ToggleMenu>
             </NavContainer>
         </NavHeader>
