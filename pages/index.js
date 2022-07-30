@@ -5,7 +5,7 @@ import DataLoader from "../components/widgets/DataLoader";
 import useAnimeList from "../hooks/useAnimeList";
 import styled from "@emotion/styled";
 import PageHeader from "../components/layouts/PageHeader";
-import Skeleton from "react-loading-skeleton";
+import SkeletonLoader from "../components/widgets/SkeletonLoader";
 
 const Section = styled.section`
   margin-bottom: 1.4rem;
@@ -61,6 +61,7 @@ const CardImage = styled.div`
 
 const CardContent = styled.div`
   padding: 0.8rem;
+  min-width: 90%;
 `;
 
 export default function Home() {
@@ -87,12 +88,10 @@ export default function Home() {
                   <ListItem key={index}>
                     <Card>
                       <CardImage>
-                        <Skeleton width="100%" height="132px" />
+                        <SkeletonLoader height="280px" />
                       </CardImage>
                       <CardContent>
-                        <Skeleton width="200px" height="10px" />
-                        <Skeleton width="150px" height="10px" />
-                        <Skeleton width="100px" height="10px" />
+                        <SkeletonLoader width="100%" height="10px" />
                       </CardContent>
                     </Card>
                   </ListItem>
