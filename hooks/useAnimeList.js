@@ -16,6 +16,11 @@ const useAnimeList = () => {
   };
 
   const paginate = (page) => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
     setPage(page);
   };
 

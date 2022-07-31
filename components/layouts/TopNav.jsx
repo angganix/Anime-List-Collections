@@ -3,9 +3,9 @@ import Link from "next/link"
 import menuList from "../../data/menuList"
 import base from "../../styles/emotions/base"
 import { HiOutlineMenuAlt3 } from "react-icons/hi"
+import { useRouter } from "next/router"
 
 const menuStyle = `
-    color: ${base.light}88;
     cursor: pointer;
     font-weight: 200;
     display: block;
@@ -64,6 +64,7 @@ const ToggleMenu = styled.button`
 
 const MenuLink = styled.a`
     ${menuStyle}
+    color: ${props => props.active ? 'white' : base.light + '88'}
 `
 
 const TopNav = () => {
@@ -86,12 +87,15 @@ const TopNav = () => {
     )
 }
 
-const NavItem = ({ path, label }) => (
-    <li>
-        <Link href={path}>
-            <MenuLink>{label}</MenuLink>
-        </Link>
-    </li>
-)
+const NavItem = ({ path, label }) => {
+    const router = useRouter();
+    return (
+        <li>
+            <Link href={path}>
+                <MenuLink active={router.pathname === path ? true : false}>{label}</MenuLink>
+            </Link>
+        </li>
+    )
+}
 
 export default TopNav

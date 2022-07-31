@@ -1,5 +1,6 @@
 const base = {
   dark: "#151733",
+  darkSecondary: "#151622",
   blue: "#565DC6",
   pink: "#C756A9",
   green: "#56C765",

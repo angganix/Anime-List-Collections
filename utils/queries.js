@@ -20,10 +20,10 @@ export const ANIME_LIST = async (page) => {
               color
             }
             bannerImage
-            status
             season
             episodes
             genres
+            averageScore
           }
         }
       }

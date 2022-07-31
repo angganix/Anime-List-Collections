@@ -6,6 +6,26 @@ import useAnimeList from "../hooks/useAnimeList";
 import styled from "@emotion/styled";
 import PageHeader from "../components/layouts/PageHeader";
 import SkeletonLoader from "../components/widgets/SkeletonLoader";
+import base from "../styles/emotions/base";
+import { AiOutlineHeart, AiOutlineSearch, AiOutlineStar } from "react-icons/ai";
+import { FaSort } from "react-icons/fa";
+import { Button, IconButton } from "../components/styled/Button";
+
+const badgeStyle = `
+  border-radius: 50px;
+  padding: 0.2rem 0.4rem;
+  font-weight bold;
+  font-size: 11px;
+  min-width: max-content;
+  text-shadow: 0px 0px 0.5px #222;
+  box-shadow: 0px 0px 2px #22222277;
+  &:first-of-type {
+    margin-left: 0.4rem;
+  }
+  &:last-child {
+    margin-right: 0.4rem;
+  }
+`;
 
 const Section = styled.section`
   margin-bottom: 1.4rem;
@@ -34,7 +54,7 @@ const ListItem = styled.div`
     width: 48%;
   }
   @media (max-width: 320px) {
-    width: 47.5%;
+    width: 47.8%;
   }
 `;
 
@@ -48,6 +68,8 @@ const Card = styled.div`
   flex-direction: column;
   overflow: hidden;
   transition: all 0.2s ease-in-out;
+  position: relative;
+  cursor: pointer;
   &:hover {
     box-shadow: 0 4px 6px rgb(49 54 68 / 9%), 0 10px 40px rgb(49 54 68 / 30%);
   }
@@ -59,9 +81,88 @@ const CardImage = styled.div`
   position: static;
 `;
 
-const CardContent = styled.div`
-  padding: 0.8rem;
-  min-width: 90%;
+const AnimeTitle = styled.h5`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 0.5rem;
+  width: 94%;
+  backdrop-filter: blur(10px);
+  color: white;
+  font-weight: 300;
+  background: rgba(10, 10, 10, 0.5);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  @media (max-width: 576px) {
+    padding: 0.3rem 0.4rem;
+    font-size: 12px;
+  }
+`;
+
+const GenreWrapper = styled.div`
+  position: absolute;
+  bottom: 10%;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.5rem 0;
+  @media (max-width: 576px) {
+    bottom: 11%;
+    overflow-x: auto;
+  }
+`;
+
+const GenreItem = styled.span`
+  background: ${base.light};
+  color: ${base.dark};
+  ${badgeStyle}
+`;
+
+const AnimeHead = styled.div`
+  position: absolute;
+  top: 0;
+  left 0;
+  width: 100%;
+  padding: 0.5rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1;
+`;
+
+const AnimeSeason = styled.span`
+  ${badgeStyle}
+  background: ${base.blue};
+  color: ${base.light};
+`;
+
+const AnimeScore = styled.span`
+  ${badgeStyle}
+  background: ${base.orange};
+  color: ${base.light};
+  font-size: 13px;
+`;
+
+const PaginationWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem auto;
+`;
+
+const PagingIcon = styled.span`
+  font-size: 24px;
+  margin-top: -0.2rem;
+  font-weight: 300;
+`;
+
+const PagingLabel = styled.span`
+  font-size: 14px;
+  font-weight: 300;
 `;
 
 export default function Home() {
@@ -79,7 +180,14 @@ export default function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <PageHeader title="Trending List" />
+        <PageHeader title="Trending List">
+          <IconButton color="#aaa" hoverColor="#fff" title="Search">
+            <AiOutlineSearch />
+          </IconButton>
+          <IconButton color="#aaa" hoverColor="#fff" title="Sort">
+            <FaSort />
+          </IconButton>
+        </PageHeader>
 
         <Section>
           <ListWrapper>
@@ -90,15 +198,21 @@ export default function Home() {
                       <CardImage>
                         <SkeletonLoader height="280px" />
                       </CardImage>
-                      <CardContent>
-                        <SkeletonLoader width="100%" height="10px" />
-                      </CardContent>
                     </Card>
                   </ListItem>
                 ))
               : list?.map((item, index) => (
                   <ListItem key={index}>
                     <Card>
+                      <AnimeHead>
+                        <AnimeSeason>{item?.season}</AnimeSeason>
+                        <AnimeScore>
+                          <AiOutlineStar
+                            style={{ marginBottom: -1.8, marginRight: 1.5 }}
+                          />
+                          <span>{item?.averageScore / 10}</span>
+                        </AnimeScore>
+                      </AnimeHead>
                       <CardImage>
                         <Image
                           src={item?.coverImage?.large}
@@ -109,16 +223,31 @@ export default function Home() {
                           alt={item?.title?.romaji}
                         />
                       </CardImage>
-                      <CardContent>
-                        <h6>{item?.title?.romaji}</h6>
-                      </CardContent>
+                      <GenreWrapper>
+                        {item?.genres?.slice(0, 3)?.map((genre) => (
+                          <GenreItem key={genre}>{genre}</GenreItem>
+                        ))}
+                      </GenreWrapper>
+                      <AnimeTitle title={item?.title?.romaji}>
+                        {item?.title?.romaji}
+                      </AnimeTitle>
                     </Card>
                   </ListItem>
                 ))}
           </ListWrapper>
-          <button type="button" onClick={() => paginate(page + 1)}>
-            Next
-          </button>
+          <PaginationWrapper>
+            <Button
+              disabled={page === 1}
+              type="button"
+              onClick={() => paginate(page - 1)}
+            >
+              <PagingIcon>&laquo;</PagingIcon>{" "}
+              <PagingLabel>Previous</PagingLabel>
+            </Button>
+            <Button type="button" onClick={() => paginate(page + 1)}>
+              <PagingLabel>Next</PagingLabel> <PagingIcon>&raquo;</PagingIcon>
+            </Button>
+          </PaginationWrapper>
         </Section>
       </div>
     </Main>
