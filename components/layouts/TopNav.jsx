@@ -22,7 +22,7 @@ const NavHeader = styled.header`
     position: static;
     top: 0;
     background-color: ${base.dark};
-    padding: 2rem 16rem 0.8rem;
+    padding: 1rem 4rem 0.8rem;
     z-index: 1001;
     @media (max-width: 576px) {
         padding: 0 0.3rem;
@@ -56,6 +56,7 @@ const MenuWrapper = styled.ul`
 
 const ToggleMenu = styled.button`
     border-radius: 0.4rem;
+    color: white;
     ${menuStyle}
     @media (min-width: 576px) {
         display: none;
