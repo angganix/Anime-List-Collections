@@ -6,6 +6,7 @@ import useAnimeDetail from "../../hooks/useAnimeDetail";
 import base from "../../styles/emotions/base";
 import { CardImage } from "../../components/styled/Anime";
 import Image from "next/image";
+import { AiOutlineHeart, AiOutlinePlus } from "react-icons/ai";
 
 const baseColumn = `
     display: flex;
@@ -51,9 +52,10 @@ const ColumnWrapper = styled.section`
   background: white;
   border-radius: 0.5rem;
   box-shadow: 0px 0px 12px #cccccc33;
+  position: relative;
   @media (max-width: 576px) {
     flex-direction: column;
-    margin: 4rem 0.4rem 0.4rem 4rem;
+    margin: 4rem 0.4rem 0.4rem 0.4rem;
   }
 `;
 
@@ -62,7 +64,7 @@ const ColumnContainer = styled.section`
   margin: 1rem 4rem 0 4rem;
   @media (max-width: 576px) {
     flex-direction: column;
-    margin: 1rem 0.4rem 0.4rem 4rem;
+    margin: 1rem 0.4rem 0.4rem 0.4rem;
   }
 `;
 
@@ -147,6 +149,9 @@ const CharacterColumnWrapper = styled.div`
   overflow: hidden;
   box-shadow: 0px 0px 12px #cccccc33;
   width: 49%;
+  @media (max-width: 576px) {
+    width: 100%;
+  }
 `;
 
 const CharacterData = styled.div`
@@ -160,10 +165,12 @@ const CharacterData = styled.div`
 
 const CharacterDataName = styled.h5`
   color: ${base.dark}88;
+  text-align: ${(props) => (props.endAlign ? "right" : "left")};
 `;
 
 const CharacterDataDetail = styled.h6`
   color: ${base.dark}66;
+  text-align: ${(props) => (props.endAlign ? "right" : "left")};
 `;
 
 const CharacterDataWrapper = styled.div`
@@ -177,7 +184,29 @@ const CharacterDataWrapper = styled.div`
 `;
 
 const CharacterImageWrapper = styled.div`
-  width: 30%;
+  width: 50%;
+`;
+
+const AddCollection = styled.button`
+  padding: 0.5rem 0.8rem;
+  cursor: pointer;
+  z-index: 2;
+  border-radius: 0.6rem;
+  box-shadow: 0px 0px 8px ${base.pink}44;
+  background-color: ${base.pink};
+  color: white;
+  position: absolute;
+  top: -1.4rem;
+  font-size: 17px;
+  right: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.2rem;
+  @media (max-width: 576px) {
+    right: 0;
+    top: 18rem;
+  }
 `;
 
 const AnimeDetail = () => {
@@ -196,6 +225,10 @@ const AnimeDetail = () => {
           {data ? (
             <>
               <ColumnWrapper>
+                <AddCollection>
+                  <AiOutlineHeart size={24} />
+                  <span>Add Collection</span>
+                </AddCollection>
                 <InfoColumn>
                   <CardImage style={{ marginTop: "-4rem" }}>
                     <Image
@@ -297,10 +330,10 @@ const AnimeDetail = () => {
                           </CharacterData>
                           <CharacterData>
                             <CharacterDataWrapper endAlign>
-                              <CharacterDataName>
+                              <CharacterDataName endAlign>
                                 {character?.voiceActors[0]?.name?.full}
                               </CharacterDataName>
-                              <CharacterDataDetail>
+                              <CharacterDataDetail endAlign>
                                 {character?.voiceActors[0]?.languageV2}
                               </CharacterDataDetail>
                             </CharacterDataWrapper>

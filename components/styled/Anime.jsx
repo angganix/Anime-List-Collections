@@ -154,4 +154,7 @@ export const PagingIcon = styled.span`
 export const PagingLabel = styled.span`
   font-size: 14px;
   font-weight: 300;
+  @media (max-width : 576px) {
+    display: ${props => props.hideMobile ? 'none' : 'block'};
+  }
 `;

@@ -13,7 +13,7 @@ const baseButton = `
 export const Button = styled.button`
     ${baseButton}
     background-color: ${props => props.disabled ? base.light : base.dark};
-    color: ${props => props.disabled ? base.dark + "55" : base.light};
+    color: ${props => props.disabled ? base.dark + "aa" : base.light};
     cursor: ${props => props.disabled ? 'inherit' : 'pointer'};
     box-shadow: 0px 0px 8px #33333333;
 `

@@ -26,7 +26,7 @@ import {
 } from "../components/styled/Anime";
 
 export default function Home() {
-  const { list, loading, paginate, page } = useAnimeList();
+  const { list, loading, paginate, page, lastPage } = useAnimeList();
   return (
     <Main>
       <div>
@@ -104,13 +104,41 @@ export default function Home() {
             <Button
               disabled={page === 1}
               type="button"
-              onClick={() => paginate(page - 1)}
+              onClick={() => paginate(1)}
             >
               <PagingIcon>&laquo;</PagingIcon>{" "}
-              <PagingLabel>Previous</PagingLabel>
+              <PagingLabel hideMobile>First</PagingLabel>
             </Button>
-            <Button type="button" onClick={() => paginate(page + 1)}>
-              <PagingLabel>Next</PagingLabel> <PagingIcon>&raquo;</PagingIcon>
+            <Button
+              disabled={page === 1}
+              type="button"
+              onClick={() => paginate(page - 1)}
+            >
+              <PagingIcon>&lsaquo;</PagingIcon>{" "}
+              <PagingLabel hideMobile>Previous</PagingLabel>
+            </Button>
+            <Button disabled={true} type="button">
+              <PagingIcon>&nbsp;</PagingIcon>
+              <PagingLabel>
+                <strong>{page}</strong> of <strong>{lastPage}</strong>
+              </PagingLabel>
+              <PagingIcon>&nbsp;</PagingIcon>
+            </Button>
+            <Button
+              disabled={page === lastPage}
+              type="button"
+              onClick={() => paginate(page + 1)}
+            >
+              <PagingLabel hideMobile>Next</PagingLabel>{" "}
+              <PagingIcon>&rsaquo;</PagingIcon>
+            </Button>
+            <Button
+              disabled={page === lastPage}
+              type="button"
+              onClick={() => paginate(lastPage)}
+            >
+              <PagingLabel hideMobile>Last</PagingLabel>{" "}
+              <PagingIcon>&raquo;</PagingIcon>
             </Button>
           </PaginationWrapper>
         </Section>

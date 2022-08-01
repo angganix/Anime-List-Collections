@@ -5,11 +5,13 @@ const useAnimeList = () => {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [list, setList] = useState(null);
+  const [lastPage, setLastPage] = useState(0);
 
   const getData = async () => {
     setLoading(true);
     const result = await ANIME_LIST(page);
     setList(result?.data?.Page?.media);
+    setLastPage(result?.data?.Page?.pageInfo?.lastPage);
     setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -32,6 +34,7 @@ const useAnimeList = () => {
     list,
     loading,
     page,
+    lastPage,
     paginate,
   };
 };

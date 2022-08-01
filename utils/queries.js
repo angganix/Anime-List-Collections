@@ -6,6 +6,10 @@ export const ANIME_LIST = async (page) => {
     query: gql`
       query {
         Page(page: ${page}, perPage: 10) {
+          pageInfo {
+            lastPage
+            currentPage
+          }
           media(type: ANIME, sort: TRENDING_DESC) {
             id
             title {
