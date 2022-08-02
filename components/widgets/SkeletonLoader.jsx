@@ -14,14 +14,14 @@ const skeletonAnimation = keyframes`
 const Skeleton = styled.div`
   animation: ${skeletonAnimation} 1s linear infinite alternate;
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: ${props => props.noGap ? '0' : '0.5rem'};
   width: ${props => props.width};
   height: ${props => props.height};
   border-radius: 0.2rem;
 `
 
-const SkeletonLoader = ({ width = "100%", height = "15px" }) => {
-    return <Skeleton width={width} height={height} />
+const SkeletonLoader = ({ width = "100%", height = "15px", noGap = false }) => {
+  return <Skeleton width={width} height={height} noGap={noGap} />
 }
 
 export default SkeletonLoader

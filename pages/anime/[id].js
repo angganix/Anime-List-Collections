@@ -1,236 +1,76 @@
 import Head from "next/head";
-import React from "react";
+import React, { useState } from "react";
 import Main from "../../components/layouts/Main";
-import styled from "@emotion/styled";
 import useAnimeDetail from "../../hooks/useAnimeDetail";
-import base from "../../styles/emotions/base";
 import { CardImage } from "../../components/styled/Anime";
 import Image from "next/image";
-import { AiOutlineHeart, AiOutlinePlus } from "react-icons/ai";
-
-const baseColumn = `
-    display: flex;
-    position: relative;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 1.4rem;
-    flex-direction: row;
-`;
-
-const Section = styled.section`
-  margin-bottom: 1.4rem;
-  @media (max-width: 576px) {
-    padding: 0 0.5rem;
-  }
-`;
-
-const GenreWrapper = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin: 0.8rem 0;
-  @media (max-width: 576px) {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-  }
-`;
-
-const GenreItem = styled.span`
-  border-radius: 50px;
-  padding: 0.2rem 0.4rem;
-  font-size: 11.5px;
-  background-color: ${base.light};
-  box-shadow: 0px 0px 2px #88888844;
-`;
-
-const ColumnWrapper = styled.section`
-  ${baseColumn}
-  padding: 1rem;
-  margin: 4rem 4rem 0 4rem;
-  background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0px 0px 12px #cccccc33;
-  position: relative;
-  @media (max-width: 576px) {
-    flex-direction: column;
-    margin: 4rem 0.4rem 0.4rem 0.4rem;
-  }
-`;
-
-const ColumnContainer = styled.section`
-  ${baseColumn}
-  margin: 1rem 4rem 0 4rem;
-  @media (max-width: 576px) {
-    flex-direction: column;
-    margin: 1rem 0.4rem 0.4rem 0.4rem;
-  }
-`;
-
-const InfoColumn = styled.aside`
-  width: ${(props) => (props.noGap ? "225px" : "200px")};
-  flex-shrink: 0;
-  margin-top: ${(props) => (props.marginTop ? props.marginTop : 0)};
-  @media (max-width: 576px) {
-    width: 100%;
-  }
-`;
-
-const ContentColumn = styled.div`
-  flex-grow: 1;
-  @media (max-width: 576px) {
-    width: 100%;
-  }
-`;
-
-const CardInfo = styled.div`
-  padding: 1rem;
-  border-radius: 0.5rem;
-  background-color: white;
-  box-shadow: 0px 0px 12px #cccccc33;
-`;
-
-const AnimeTitle = styled.h3`
-  color: ${base.dark}88;
-  font-weight: 500;
-  margin-bottom: 1rem;
-`;
-
-const AnimeDescription = styled.p`
-  color: ${base.dark}88;
-  font-size: 15px;
-`;
-
-const InfoDataGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0.8rem;
-`;
-
-const InfoDataLabel = styled.label`
-  color: ${base.dark}77;
-  font-weight: 400;
-  font-size: 12.5px;
-`;
-
-const InfoDataValue = styled.div`
-  color: ${base.dark};
-  font-weight: 500;
-  font-size: 13px;
-  white-space: wrap;
-`;
-
-const SectionContent = styled.section`
-  margin-bottom: 1.5rem;
-`;
-
-const SectionContentTitle = styled.h4`
-  color: ${base.dark}88;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-`;
-
-const SectionContentWrapper = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 1rem;
-`;
-
-const CharacterColumnWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.5rem;
-  background: white;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  box-shadow: 0px 0px 12px #cccccc33;
-  width: 49%;
-  @media (max-width: 576px) {
-    width: 100%;
-  }
-`;
-
-const CharacterData = styled.div`
-  width: 45%;
-  flex-grow: 1;
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 0.5em;
-`;
-
-const CharacterDataName = styled.h5`
-  color: ${base.dark}88;
-  text-align: ${(props) => (props.endAlign ? "right" : "left")};
-`;
-
-const CharacterDataDetail = styled.h6`
-  color: ${base.dark}66;
-  text-align: ${(props) => (props.endAlign ? "right" : "left")};
-`;
-
-const CharacterDataWrapper = styled.div`
-  padding: 0.5rem 0;
-  width: 70%;
-  display: flex;
-  justify-content: space-between;
-  align-items: ${(props) => (props.endAlign ? "flex-end" : "flex-start")};
-  flex-direction: column;
-  min-height: 70px;
-`;
-
-const CharacterImageWrapper = styled.div`
-  width: 50%;
-`;
-
-const AddCollection = styled.button`
-  padding: 0.5rem 0.8rem;
-  cursor: pointer;
-  z-index: 2;
-  border-radius: 0.6rem;
-  box-shadow: 0px 0px 8px ${base.pink}44;
-  background-color: ${base.pink};
-  color: white;
-  position: absolute;
-  top: -1.4rem;
-  font-size: 17px;
-  right: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.2rem;
-  @media (max-width: 576px) {
-    right: 0;
-    top: 18rem;
-  }
-`;
+import { AiOutlineHeart } from "react-icons/ai";
+import SkeletonLoader from "../../components/widgets/SkeletonLoader";
+import Modal from "../../components/widgets/Modal";
+import {
+  AddCollection,
+  AnimeDescription,
+  AnimeTitle,
+  CardInfo,
+  CharacterColumnWrapper,
+  CharacterData,
+  CharacterDataDetail,
+  CharacterDataName,
+  CharacterDataWrapper,
+  CharacterImageWrapper,
+  ColumnContainer,
+  ColumnWrapper,
+  ContentColumn,
+  GenreItem,
+  GenreWrapper,
+  InfoColumn,
+  InfoDataGroup,
+  InfoDataLabel,
+  InfoDataValue,
+  Section,
+  SectionContent,
+  SectionContentTitle,
+  SectionContentWrapper,
+} from "../../components/styled/AnimeDetail";
+import Collection from "../../components/widgets/Collection";
 
 const AnimeDetail = () => {
   const { data, loading } = useAnimeDetail();
+  const [showModal, setShowModal] = useState(false);
+
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
 
   return (
     <Main>
       <div>
         <Head>
-          <title>Anime Detail</title>
-          <meta name="description" content="Detail anime page" />
+          <title>Anime Detail - {data?.title?.romaji}</title>
+          <meta
+            name="description"
+            content={`Add ${data?.title?.romaji} to your collection`}
+          />
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
         <Section>
-          {data ? (
-            <>
-              <ColumnWrapper>
-                <AddCollection>
+          <Modal show={showModal} onHide={toggleModal}>
+            <Collection data={data} closeForm={toggleModal} />
+          </Modal>
+          <>
+            <ColumnWrapper>
+              {!loading ? (
+                <AddCollection onClick={toggleModal}>
                   <AiOutlineHeart size={24} />
                   <span>Add Collection</span>
                 </AddCollection>
-                <InfoColumn>
-                  <CardImage style={{ marginTop: "-4rem" }}>
+              ) : null}
+              <InfoColumn>
+                <CardImage style={{ marginTop: "-4rem" }}>
+                  {loading ? (
+                    <SkeletonLoader height="264px" noGap />
+                  ) : data ? (
                     <Image
                       src={data?.coverImage?.large}
                       width="100%"
@@ -240,126 +80,212 @@ const AnimeDetail = () => {
                       style={{ borderRadius: "0.5rem" }}
                       alt={data?.title?.romaji}
                     />
-                  </CardImage>
-                  <GenreWrapper>
-                    {data?.genres?.slice(0, 3)?.map((genre) => (
-                      <GenreItem key={genre}>{genre}</GenreItem>
-                    ))}
-                  </GenreWrapper>
-                </InfoColumn>
-                <ContentColumn>
-                  <AnimeTitle>{data?.title?.romaji}</AnimeTitle>
+                  ) : null}
+                </CardImage>
+                <GenreWrapper>
+                  {loading ? (
+                    <SkeletonLoader height="20px" noGap />
+                  ) : (
+                    data?.genres
+                      ?.slice(0, 3)
+                      ?.map((genre) => (
+                        <GenreItem key={genre}>{genre}</GenreItem>
+                      ))
+                  )}
+                </GenreWrapper>
+              </InfoColumn>
+              <ContentColumn>
+                <AnimeTitle>
+                  {loading ? (
+                    <SkeletonLoader width="200px" height="22px" />
+                  ) : (
+                    data?.title?.romaji
+                  )}
+                </AnimeTitle>
+                {!loading ? (
                   <AnimeDescription
                     dangerouslySetInnerHTML={{
-                      __html: data?.description ?? "No description yet...",
+                      __html:
+                        data?.description && !loading
+                          ? data?.description
+                          : null,
                     }}
                   />
-                </ContentColumn>
-              </ColumnWrapper>
-              <ColumnContainer>
-                <InfoColumn noGap>
-                  <CardInfo>
-                    <InfoDataGroup>
-                      <InfoDataLabel>Format</InfoDataLabel>
-                      <InfoDataValue>{data?.format}</InfoDataValue>
-                    </InfoDataGroup>
-                    <InfoDataGroup>
-                      <InfoDataLabel>Episodes</InfoDataLabel>
-                      <InfoDataValue>{data?.episodes}</InfoDataValue>
-                    </InfoDataGroup>
-                    <InfoDataGroup>
-                      <InfoDataLabel>Episode Duration</InfoDataLabel>
-                      <InfoDataValue>{data?.duration} mins</InfoDataValue>
-                    </InfoDataGroup>
-                    <InfoDataGroup>
-                      <InfoDataLabel>Status</InfoDataLabel>
-                      <InfoDataValue>{data?.status}</InfoDataValue>
-                    </InfoDataGroup>
-                    <InfoDataGroup>
-                      <InfoDataLabel>Season</InfoDataLabel>
-                      <InfoDataValue>{data?.season}</InfoDataValue>
-                    </InfoDataGroup>
-                    <InfoDataGroup>
-                      <InfoDataLabel>Score</InfoDataLabel>
-                      <InfoDataValue>{data?.averageScore / 10}</InfoDataValue>
-                    </InfoDataGroup>
-                    <InfoDataGroup>
-                      <InfoDataLabel>Source</InfoDataLabel>
-                      <InfoDataValue>{data?.source}</InfoDataValue>
-                    </InfoDataGroup>
-                    <InfoDataGroup>
-                      <InfoDataLabel>Studios</InfoDataLabel>
-                      <InfoDataValue>
-                        {data?.studios?.edges?.map((studio) => (
-                          <span
-                            style={{ display: "block" }}
-                            key={studio?.node?.name}
-                          >
-                            {studio?.node?.name}
-                          </span>
-                        ))}
-                      </InfoDataValue>
-                    </InfoDataGroup>
-                  </CardInfo>
-                </InfoColumn>
-                <ContentColumn>
-                  <SectionContent>
-                    <SectionContentTitle>Characters</SectionContentTitle>
-                    <SectionContentWrapper>
-                      {data?.characters?.edges?.map((character, index) => (
-                        <CharacterColumnWrapper key={index}>
+                ) : (
+                  [1, 2, 3, 4, 5].map((desc) => (
+                    <SkeletonLoader key={desc} width={`${100 / desc}%`} />
+                  ))
+                )}
+              </ContentColumn>
+            </ColumnWrapper>
+            <ColumnContainer>
+              <InfoColumn noGap>
+                <CardInfo>
+                  <AnimeInfoGroup
+                    label="Format"
+                    value={data ? data?.format : null}
+                    loading={loading}
+                  />
+                  <AnimeInfoGroup
+                    label="Episodes"
+                    value={data?.episodes}
+                    loading={loading}
+                  />
+                  <AnimeInfoGroup
+                    label="Episode Duration"
+                    value={`${data ? data?.duration : null} mins`}
+                    loading={loading}
+                  />
+                  <AnimeInfoGroup
+                    label="Status"
+                    value={data ? data?.status : null}
+                    loading={loading}
+                  />
+                  <AnimeInfoGroup
+                    label="Season"
+                    value={data ? data?.season : null}
+                    loading={loading}
+                  />
+                  <AnimeInfoGroup
+                    label="Score"
+                    value={data ? data?.averageScore / 10 : null}
+                    loading={loading}
+                  />
+                  <AnimeInfoGroup
+                    label="Source"
+                    value={data ? data?.source : null}
+                    loading={loading}
+                  />
+                  <AnimeInfoGroup
+                    label="Studios"
+                    value={
+                      data
+                        ? data?.studios?.edges?.map((studio) => (
+                            <span
+                              style={{ display: "block" }}
+                              key={studio?.node?.name}
+                            >
+                              {studio?.node?.name}
+                            </span>
+                          ))
+                        : null
+                    }
+                    loading={loading}
+                  />
+                </CardInfo>
+              </InfoColumn>
+              <ContentColumn>
+                <SectionContent>
+                  <SectionContentTitle>
+                    {loading ? (
+                      <SkeletonLoader width="20%" height="15px" />
+                    ) : (
+                      "Characters"
+                    )}
+                  </SectionContentTitle>
+                  <SectionContentWrapper>
+                    {loading ? (
+                      [1, 2, 3, 4, 5, 6].map((char) => (
+                        <CharacterColumnWrapper key={char}>
                           <CharacterData>
                             <CharacterImageWrapper>
-                              <Image
-                                src={character?.node?.image?.large}
-                                width="100%"
-                                height="132px"
-                                layout="responsive"
-                                priority
-                                alt={character?.node?.name?.full}
-                              />
+                              <SkeletonLoader noGap height="132px" />
                             </CharacterImageWrapper>
                             <CharacterDataWrapper>
                               <CharacterDataName>
-                                {character?.node?.name?.full}
+                                <SkeletonLoader noGap width="100px" />
                               </CharacterDataName>
                               <CharacterDataDetail>
-                                {character?.node?.media?.edges[0].characterRole}
+                                <SkeletonLoader noGap width="80px" />
                               </CharacterDataDetail>
                             </CharacterDataWrapper>
                           </CharacterData>
                           <CharacterData>
                             <CharacterDataWrapper endAlign>
                               <CharacterDataName endAlign>
-                                {character?.voiceActors[0]?.name?.full}
+                                <SkeletonLoader noGap width="100px" />
                               </CharacterDataName>
                               <CharacterDataDetail endAlign>
-                                {character?.voiceActors[0]?.languageV2}
+                                <SkeletonLoader noGap width="80px" />
                               </CharacterDataDetail>
                             </CharacterDataWrapper>
                             <CharacterImageWrapper>
-                              <Image
-                                src={character?.voiceActors[0]?.image?.large}
-                                width="100%"
-                                height="132px"
-                                layout="responsive"
-                                priority
-                                alt={character?.voiceActors[0]?.name?.full}
-                              />
+                              <SkeletonLoader noGap height="132px" />
                             </CharacterImageWrapper>
                           </CharacterData>
                         </CharacterColumnWrapper>
-                      ))}
-                    </SectionContentWrapper>
-                  </SectionContent>
-                </ContentColumn>
-              </ColumnContainer>
-            </>
-          ) : null}
+                      ))
+                    ) : (
+                      <AnimeCharacter data={data} />
+                    )}
+                  </SectionContentWrapper>
+                </SectionContent>
+              </ContentColumn>
+            </ColumnContainer>
+          </>
         </Section>
       </div>
     </Main>
   );
 };
+
+const AnimeInfoGroup = ({ label, value, loading = true }) => (
+  <InfoDataGroup>
+    <InfoDataLabel>
+      {loading ? <SkeletonLoader width="40%" height="10px" /> : label}
+    </InfoDataLabel>
+    <InfoDataValue>
+      {loading ? <SkeletonLoader width="60%" height="10px" /> : value}
+    </InfoDataValue>
+  </InfoDataGroup>
+);
+
+const AnimeCharacter = ({ data }) =>
+  data
+    ? data?.characters?.edges?.map((character, index) => (
+        <CharacterColumnWrapper key={index}>
+          <CharacterData>
+            <CharacterImageWrapper>
+              <Image
+                src={character?.node?.image?.large}
+                width="100%"
+                height="132px"
+                layout="responsive"
+                priority
+                alt={character?.node?.name?.full}
+              />
+            </CharacterImageWrapper>
+            <CharacterDataWrapper>
+              <CharacterDataName>
+                {character?.node?.name?.full}
+              </CharacterDataName>
+              <CharacterDataDetail>
+                {character?.node?.media?.edges[0].characterRole}
+              </CharacterDataDetail>
+            </CharacterDataWrapper>
+          </CharacterData>
+          <CharacterData>
+            <CharacterDataWrapper endAlign>
+              <CharacterDataName endAlign>
+                {character?.voiceActors[0]?.name?.full}
+              </CharacterDataName>
+              <CharacterDataDetail endAlign>
+                {character?.voiceActors[0]?.languageV2}
+              </CharacterDataDetail>
+            </CharacterDataWrapper>
+            <CharacterImageWrapper>
+              <Image
+                src={character?.voiceActors[0]?.image?.large}
+                width="100%"
+                height="132px"
+                layout="responsive"
+                priority
+                alt={character?.voiceActors[0]?.name?.full}
+              />
+            </CharacterImageWrapper>
+          </CharacterData>
+        </CharacterColumnWrapper>
+      ))
+    : null;
 
 export default AnimeDetail;
