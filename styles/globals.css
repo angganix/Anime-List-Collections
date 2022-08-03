@@ -35,3 +35,12 @@ button {
 p {
   margin: 0;
 }
+
+.swal2-popup.swal2-toast.swal2-show {
+  display: flex !important;
+  padding: 0.4rem !important;
+}
+
+.swal2-html-container {
+  margin-left: 0.2rem !important;
+}

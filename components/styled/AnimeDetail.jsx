@@ -212,3 +212,24 @@ export const AddCollection = styled.button`
     top: 18rem;
   }
 `;
+
+export const CollectionItem = styled.a`
+  cursor: pointer;
+  padding: 0.3rem 0.6rem;
+  border-radius: 50px;
+  box-shadow: 0px 0px 8px ${base.pink}44;
+  background-color: ${props => props.color ? props.color : base.dark}cc;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 16px;
+  transition: all .2s ease-in-out;
+  &:hover {
+      background-color: ${props => props.color ? props.color : base.dark};
+  }
+  @media (max-width: 576px) {
+      font-size: 13px;
+  }
+`

@@ -6,6 +6,7 @@ const base = {
   green: "#56C765",
   orange: "#DC882F",
   light: "#F3F3F3",
+  red: "#DA4747",
 };
 
 export default base;

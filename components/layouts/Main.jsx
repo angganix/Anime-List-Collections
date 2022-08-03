@@ -1,7 +1,6 @@
 import React from 'react'
 import PageFooter from './PageFooter'
 import TopNav from './TopNav'
-import styled from '@emotion/styled'
 
 const Main = ({ children }) => {
     return (

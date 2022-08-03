@@ -7,10 +7,6 @@ const menuList = [
     path: "/collection",
     label: "Collection",
   },
-  {
-    path: "/about",
-    label: "About",
-  },
 ];
 
 export default menuList;

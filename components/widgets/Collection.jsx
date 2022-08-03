@@ -4,7 +4,9 @@ import base from '../../styles/emotions/base'
 import { useSelector, useDispatch } from "react-redux";
 import { AiOutlineCheck, AiOutlinePlus } from 'react-icons/ai';
 import NoData from './NoData';
-import { addCollection, addToCollection } from '../../store/reducers/collectionReducer';
+import { addCollection, addToCollection, editCollection } from '../../store/reducers/collectionReducer';
+import toast from './toast';
+import { v4 as uuidv4 } from 'uuid';
 
 const AnimeTitle = styled.h3`
     color: ${base.dark}99;
@@ -23,7 +25,6 @@ const CollectionWrapper = styled.div`
 const CollectionContent = styled.div`
     border-radius: 0.3rem;
     min-height: 100%;
-    margin: 2rem 0;
 `
 
 const ButtonGroup = styled.div`
@@ -48,12 +49,12 @@ const CollectionButton = styled.button`
     font-size: 18px;
     transition: all .2s ease-in-out;
     flex-grow: 1;
-    flex-basis: 50%;
     &:hover {
         background-color: ${props => props.color ? props.color : base.dark};
     }
     @media (max-width: 576px) {
         flex-basis: 100%;
+        font-size: 13px;
     }
 `
 
@@ -62,14 +63,6 @@ const CollectionTitle = styled.h3`
     font-weight: 500;
     text-align: ${props => props.align ? props.align : "left"};
     margin-bottom: 1rem;
-`
-
-const CollectionFormWrapper = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    flex-direction: column;
 `
 
 const FormGroup = styled.div`
@@ -108,7 +101,7 @@ const CollectionList = styled.div`
 
 const CollectionItemWrapper = styled.div`
     cursor: pointer;
-    width: 26.6%;
+    width: auto;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -116,6 +109,7 @@ const CollectionItemWrapper = styled.div`
     border-radius: 0.6rem;
     padding: 0.5rem 0.8rem;
     color: white;
+    font-size: 14px;
     background-color: ${props => props.checked ? base.dark : `${base.dark}cc`};
     @media (max-width: 576px) {
         width: 90%;
@@ -136,6 +130,14 @@ const LegendCollection = styled.legend`
     color: ${base.dark}88;
 `
 
+const FormWrapper = styled.div`
+    padding: 1rem;
+    @media (max-width: 576px) {
+        padding: 0.8rem 0;
+        max-width: 100%;
+    }
+`
+
 const Collection = ({ data, closeForm }) => {
     const dispatch = useDispatch()
     const { list } = useSelector(state => state.collection);
@@ -152,16 +154,16 @@ const Collection = ({ data, closeForm }) => {
             anime: data
         }));
         closeForm();
-        alert(`${data?.title?.romaji} successfully add to collections!`);
+        toast("success", `${data?.title?.romaji} successfully add to collections!`);
     }
 
-    const selectCollection = (name) => {
-        const checkSelected = selectedCollection.find(item => item === name);
+    const selectCollection = (collection) => {
+        const checkSelected = selectedCollection.find(item => item.id === collection.id);
         if (checkSelected) {
-            const updateSelected = selectedCollection.filter(item => item !== name);
+            const updateSelected = selectedCollection.filter(item => item.id !== collection.id);
             setSelectedCollection(updateSelected);
         } else {
-            setSelectedCollection([...selectedCollection, name]);
+            setSelectedCollection([...selectedCollection, collection]);
         }
     }
 
@@ -185,7 +187,7 @@ const Collection = ({ data, closeForm }) => {
                             <NoData>
                                 <>
                                     <CollectionTitle align="center">
-                                        You don't have any collection
+                                        You don&apos;t have any collection
                                     </CollectionTitle>
                                     <CollectionButton onClick={toggleFormCollection}>
                                         <AiOutlinePlus />
@@ -199,9 +201,9 @@ const Collection = ({ data, closeForm }) => {
                                 <CollectionList>
                                     {list?.map(item => (
                                         <CollectionItem
-                                            key={item?.name}
+                                            key={item?.id}
                                             selectCollection={selectCollection}
-                                            {...item}
+                                            collection={{ id: item.id, name: item.name }}
                                         />
                                     ))}
                                 </CollectionList>
@@ -227,7 +229,7 @@ const Collection = ({ data, closeForm }) => {
                             onClick={saveToCollection}
                         >
                             <AiOutlineCheck />
-                            <span>Add to Collection</span>
+                            <span>Save</span>
                         </CollectionButton>
                     ) : null}
                 </ButtonGroup>
@@ -236,13 +238,13 @@ const Collection = ({ data, closeForm }) => {
     )
 }
 
-const CollectionItem = ({ name, selectCollection }) => {
+const CollectionItem = ({ collection, selectCollection }) => {
     const checkRef = useRef(null);
     const [checked, setChecked] = useState(false);
 
     const checkItem = () => {
         checkRef.current.click();
-        selectCollection(name);
+        selectCollection(collection);
     }
 
     return (
@@ -258,13 +260,13 @@ const CollectionItem = ({ name, selectCollection }) => {
                 <AiOutlineCheck color={base.light} />
             ) : null}
             <CollectionItemLabel>
-                {name}
+                {collection.name}
             </CollectionItemLabel>
         </CollectionItemWrapper>
     )
 }
 
-const CollectionForm = ({ onHide }) => {
+export const CollectionForm = ({ onHide = null, data = null }) => {
     const inputRef = useRef(null);
     const [collectionName, setCollectionName] = useState("");
     const { list } = useSelector(state => state.collection);
@@ -282,22 +284,50 @@ const CollectionForm = ({ onHide }) => {
     }
 
     const existsCheck = () => {
-        return list.find(item => item.name === collectionName);
+        return list.find(item => (item.name).toLowerCase() === collectionName.toLocaleLowerCase());
+    }
+
+    const updateExistsCheck = () => {
+        return list.find(item =>
+            (item.name).toLocaleLowerCase() === collectionName.toLocaleLowerCase() &&
+            item.id !== data?.id
+        );
     }
 
     const addNewCollection = () => {
         if (validate(collectionName)) {
             if (!existsCheck()) {
                 dispatch(addCollection({
+                    id: uuidv4(),
                     name: collectionName,
                     anime: []
                 }));
+                toast("success", `${collectionName} successfully added!`)
                 onHide();
             } else {
-                alert(`${collectionName} already exists!`);
+                toast("error", `${collectionName} already exists!`);
             }
         } else {
-            alert("Special character is not allowed on collection name!");
+            toast("error", "Special character is not allowed on collection name!");
+            return false;
+        }
+    }
+
+    const updateCollectionData = () => {
+        if (validate(collectionName)) {
+            if (!updateExistsCheck()) {
+                dispatch(editCollection({
+                    id: data?.id,
+                    name: collectionName
+                }));
+                toast("success", `${collectionName} successfully updated!`)
+                onHide();
+            } else {
+                toast("error", `${collectionName} already use by another!`);
+            }
+
+        } else {
+            toast("error", "Special character is not allowed on collection name!");
             return false;
         }
     }
@@ -308,21 +338,38 @@ const CollectionForm = ({ onHide }) => {
         }
     }, []);
 
+    useEffect(() => {
+        if (data) {
+            setCollectionName(data?.name);
+        }
+    }, [data]);
+
     return (
-        <>
+        <FormWrapper>
             <FormGroup>
                 <FormLabel htmlFor="name">Collection Name</FormLabel>
-                <FormInput ref={inputRef} id="name" onChange={onInputChange} />
+                <FormInput
+                    ref={inputRef}
+                    id="name"
+                    value={collectionName}
+                    onChange={onInputChange}
+                />
             </FormGroup>
             <ButtonGroup>
                 <CollectionButton color={base.orange} onClick={onHide}>
                     <span>Cancel</span>
                 </CollectionButton>
-                <CollectionButton onClick={addNewCollection}>
-                    <span>Save Collection</span>
-                </CollectionButton>
+                {data?.id ? (
+                    <CollectionButton onClick={updateCollectionData}>
+                        <span>Update</span>
+                    </CollectionButton>
+                ) : (
+                    <CollectionButton onClick={addNewCollection}>
+                        <span>Save</span>
+                    </CollectionButton>
+                )}
             </ButtonGroup>
-        </>
+        </FormWrapper>
     )
 }
 

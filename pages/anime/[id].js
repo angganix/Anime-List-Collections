@@ -18,6 +18,7 @@ import {
   CharacterDataName,
   CharacterDataWrapper,
   CharacterImageWrapper,
+  CollectionItem,
   ColumnContainer,
   ColumnWrapper,
   ContentColumn,
@@ -33,10 +34,22 @@ import {
   SectionContentWrapper,
 } from "../../components/styled/AnimeDetail";
 import Collection from "../../components/widgets/Collection";
+import { useSelector } from "react-redux";
+import Link from "next/link";
 
 const AnimeDetail = () => {
+  const { list } = useSelector((state) => state.collection);
   const { data, loading } = useAnimeDetail();
   const [showModal, setShowModal] = useState(false);
+
+  const animeCollections = () => {
+    const result = list
+      .filter((item) => {
+        return item.anime.find((anime) => anime.id === data?.id);
+      })
+      .map((item) => ({ id: item.id, name: item.name }));
+    return result;
+  };
 
   const toggleModal = () => {
     setShowModal(!showModal);
@@ -175,6 +188,35 @@ const AnimeDetail = () => {
                 </CardInfo>
               </InfoColumn>
               <ContentColumn>
+                {animeCollections().length ? (
+                  <SectionContent>
+                    <SectionContentTitle>
+                      {loading ? (
+                        <SkeletonLoader width="18%" height="15px" />
+                      ) : (
+                        "Added to below collections"
+                      )}
+                    </SectionContentTitle>
+                    <SectionContentWrapper>
+                      {loading
+                        ? [1, 2, 3].map((collection) => (
+                            <SkeletonLoader
+                              width="18%"
+                              height="25px"
+                              key={collection}
+                            />
+                          ))
+                        : animeCollections().map((collection) => (
+                            <Link
+                              key={collection.id}
+                              href={`/collection/${collection.id}`}
+                            >
+                              <CollectionItem>{collection.name}</CollectionItem>
+                            </Link>
+                          ))}
+                    </SectionContentWrapper>
+                  </SectionContent>
+                ) : null}
                 <SectionContent>
                   <SectionContentTitle>
                     {loading ? (

@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
+import base from '../../styles/emotions/base'
 
 const ModalWrapper = styled.div`
     position: fixed;
@@ -27,8 +28,9 @@ const ModalBackdrop = styled.div`
 const ModalContent = styled.div`
     padding: 1rem;
     background: white;
-    min-width: 576px;
-    max-width: 576px;
+    min-width: 500px;
+    max-width: 500px;
+    max-height: 400px;
     z-index: 1001;
     overflow-y: auto;
     box-shadow: 0px 0px 12px #00000022;
@@ -39,12 +41,21 @@ const ModalContent = styled.div`
     }
 `
 
-const Modal = ({ children, show, onHide }) => {
+const ModalTitle = styled.h4`
+    color: ${base.dark}aa;
+    padding: 0.4rem 1rem;
+    border-bottom: 1px solid ${base.dark}11;
+`
+
+const Modal = ({ children, show, onHide, title = null }) => {
     if (show) {
         return (
             <ModalWrapper>
                 <ModalBackdrop onClick={onHide} />
                 <ModalContent>
+                    {title ? (
+                        <ModalTitle>{title}</ModalTitle>
+                    ) : null}
                     {children}
                 </ModalContent>
             </ModalWrapper>

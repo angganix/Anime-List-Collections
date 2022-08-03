@@ -16,21 +16,33 @@ const collectionReducer = createSlice({
         state.list = [...state.list, action.payload];
       }
     },
+    editCollection: (state, action) => {
+      const updatedCollection = state.list.map((item) => {
+        if (item.id === action.payload.id) {
+          return {
+            ...item,
+            name: action.payload.name,
+          };
+        }
+        return item;
+      });
+      state.list = updatedCollection;
+    },
     removeCollection: (state, action) => {
       const updatedCollection = state.list.filter(
-        (item) => item.name !== action.payload.name
+        (item) => item.id !== action.payload.id
       );
       state.list = updatedCollection;
     },
     addToCollection: (state, action) => {
       action.payload.collections.map((item) => {
         const findCollection = state.list.find(
-          (collection) => collection.name === item
+          (collection) => collection.id === item.id
         );
         if (findCollection) {
           const updateAnime = state.list.map((collection) => {
             if (
-              collection.name === item &&
+              collection.id === item.id &&
               !collection.anime.find(
                 (anime) => anime.id === action.payload.anime.id
               )
@@ -50,6 +62,10 @@ const collectionReducer = createSlice({
   },
 });
 
-export const { addCollection, removeCollection, addToCollection } =
-  collectionReducer.actions;
+export const {
+  addCollection,
+  removeCollection,
+  addToCollection,
+  editCollection,
+} = collectionReducer.actions;
 export default collectionReducer.reducer;
