@@ -58,7 +58,20 @@ const collectionReducer = createSlice({
         }
       });
     },
-    removeFromCollection: (state, action) => {},
+    removeFromCollection: (state, action) => {
+      const updatedAnime = state.list.map((collection) => {
+        if (collection.id === action.payload.collectionId) {
+          return {
+            ...collection,
+            anime: collection.anime.filter(
+              (anime) => anime.id !== action.payload.animeId
+            ),
+          };
+        }
+        return collection;
+      });
+      state.list = updatedAnime;
+    },
   },
 });
 
@@ -67,5 +80,6 @@ export const {
   removeCollection,
   addToCollection,
   editCollection,
+  removeFromCollection,
 } = collectionReducer.actions;
 export default collectionReducer.reducer;

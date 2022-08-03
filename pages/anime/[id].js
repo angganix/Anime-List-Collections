@@ -216,7 +216,13 @@ const AnimeDetail = () => {
                           ))}
                     </SectionContentWrapper>
                   </SectionContent>
-                ) : null}
+                ) : (
+                  <SectionContent>
+                    <SectionContentTitle>
+                      You haven&apos;t added this anime to any collections yet
+                    </SectionContentTitle>
+                  </SectionContent>
+                )}
                 <SectionContent>
                   <SectionContentTitle>
                     {loading ? (

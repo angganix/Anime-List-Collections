@@ -18,10 +18,13 @@ const Skeleton = styled.div`
   width: ${props => props.width};
   height: ${props => props.height};
   border-radius: 0.2rem;
+  @media (max-width: 576px) {
+    height: ${props => props.mobileHeight ? props.mobileHeight : props.height};
+  }
 `
 
-const SkeletonLoader = ({ width = "100%", height = "15px", noGap = false }) => {
-  return <Skeleton width={width} height={height} noGap={noGap} />
+const SkeletonLoader = ({ width = "100%", height = "15px", mobileHeight = false, noGap = false }) => {
+  return <Skeleton width={width} height={height} noGap={noGap} mobileHeight={mobileHeight} />
 }
 
 export default SkeletonLoader

@@ -39,7 +39,8 @@ export const ListWrapper = styled.div`
 `;
 
 export const ListItem = styled.div`
-  width: 18.5%;
+  position: relative;
+  width: ${props => props.forceWide ? '18.42%' : '18.5%'};
   @media (max-width: 576px) {
     width: 48%;
   }
